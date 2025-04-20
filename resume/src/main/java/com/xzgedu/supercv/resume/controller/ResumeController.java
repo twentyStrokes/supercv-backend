@@ -1,10 +1,12 @@
 package com.xzgedu.supercv.resume.controller;
 
+import com.xzgedu.supercv.common.exception.GenericBizException;
 import com.xzgedu.supercv.common.exception.ResumeTemplateNotFoundException;
 import com.xzgedu.supercv.resume.domain.Resume;
 import com.xzgedu.supercv.resume.service.ResumeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +24,9 @@ public class ResumeController {
 
     @Operation(summary = "获取用户创建的所有简历（非detail）")
     @GetMapping("/list/mine")
-    public Map<String, Object> getResumesByUid(@RequestHeader("uid") long uid,
-                                               @RequestParam("page_no") int pageNo,
-                                               @RequestParam("page_size") int pageSize) {
+    public Map<String, Object> getMyResumes(@RequestHeader("uid") long uid,
+                                            @RequestParam("page_no") int pageNo,
+                                            @RequestParam("page_size") int pageSize) {
         int limitOffset = (pageNo - 1) * pageSize;
         int limitSize = pageSize;
         int count = resumeService.countResumesByUid(uid);
@@ -39,7 +41,7 @@ public class ResumeController {
     @GetMapping("/detail")
     public Resume getResumeDetail(@RequestHeader("uid") long uid,
                                   @RequestParam("resume_id") long resumeId) {
-        return resumeService.getResumeDetail(uid, resumeId);
+        return resumeService.getResumeById(resumeId);
     }
 
     @Operation(summary = "删除简历")
@@ -49,53 +51,60 @@ public class ResumeController {
         resumeService.deleteResume(resumeId);
     }
 
-    @Operation(summary = "改变简历标题、模板、主题颜色、间距等等")
+    @Operation(summary = "更新简历")
     @PostMapping("/update")
     public boolean updateResume(@RequestHeader("uid") long uid,
                                 @RequestParam("resume_id") long resumeId,
-                                @RequestParam("name") String name,
-                                @RequestParam("template_id") long templateId,
-                                @RequestParam("page_margin_horizontal") int pageMarginHorizontal,
-                                @RequestParam("page_margin_vertical") int pageMarginVertical,
-                                @RequestParam("module_margin") int moduleMargin,
-                                @RequestParam("theme_color") String themeColor,
-                                @RequestParam("font_size") int fontSize,
-                                @RequestParam("font_family") String fontFamily,
-                                @RequestParam("line_height") int lineHeight) {
+                                @RequestParam(value = "name", required = false) String name,
+                                @RequestParam(value = "template_id", required = false) Long templateId,
+                                @RequestParam(value = "raw_file", required = false) String rawFile,
+                                @RequestParam(value = "raw_data_json", required = false) String rawDataJson,
+                                @RequestParam(value = "extra_style_json", required = false) String extraStyleJson,
+                                @RequestParam(value = "is_public", required = false) Boolean isPublic) {
         Resume resume = resumeService.getResumeById(resumeId);
-        resume.setName(name);
-        resume.setTemplateId(templateId);
-        resume.setPageMarginHorizontal(pageMarginHorizontal);
-        resume.setPageMarginVertical(pageMarginVertical);
-        resume.setModuleMargin(moduleMargin);
-        resume.setThemeColor(themeColor);
-        resume.setFontSize(fontSize);
-        resume.setFontFamily(fontFamily);
-        resume.setLineHeight(lineHeight);
+        if (StringUtils.isNotBlank(name)) {
+            resume.setName(name);
+        }
+        if (templateId != null) {
+            resume.setTemplateId(templateId);
+        }
+        if (rawDataJson != null) {
+            resume.setRawDataJson(rawDataJson);
+        }
+        if (extraStyleJson != null) {
+            resume.setExtraStyleJson(extraStyleJson);
+        }
+        if (isPublic != null) {
+            resume.setPublic(isPublic);
+        }
         return resumeService.updateResume(resume);
     }
 
-    @Operation(summary = "根据模板，创建一个空白简历，简历中包含demo resume的所有内容")
-    @PostMapping("/create")
+    @Operation(summary = "创建一个包含空白数据的简历，简历中有基本信息和默认模块")
+    @PostMapping("/create-blank-resume")
     public Resume createBlankResume(@RequestHeader("uid") long uid,
-                                    @RequestParam("template_id") long templateId)
-            throws ResumeTemplateNotFoundException {
-        return resumeService.createResumeFromTemplateDemo(uid, templateId);
+                                    @RequestParam("template_id") long templateId,
+                                    @RequestParam(value = "resume_name", required = false) String resumeName)
+            throws GenericBizException {
+        return resumeService.createBlankResume(uid, templateId, resumeName);
+    }
+
+    @Operation(summary = "拷贝一份简历")
+    @PostMapping("/create-from-copying")
+    public Resume createResumeFromCopying(@RequestHeader("uid") long uid,
+                                          @RequestParam("resume_id") long resumeId,
+                                          @RequestParam(value = "resume_name", required = false) String newResumeName)
+            throws GenericBizException {
+        return resumeService.copyResume(uid, resumeId, newResumeName);
     }
 
     @Operation(summary = "根据模板，以及用户上传的简历文件，创建一个简历")
     @PostMapping("/create-from-file")
     public Resume createResumeFromExistingFile(@RequestHeader("uid") long uid,
                                                @RequestParam("template_id") long templateId,
-                                               @RequestParam("resume_file_url") String resumeFileUrl)
+                                               @RequestParam("resume_file_url") String resumeFileUrl,
+                                               @RequestParam(value = "resume_name", required = false) String resumeName)
             throws ResumeTemplateNotFoundException {
-        return resumeService.createResumeFromExistingFile(uid, templateId, resumeFileUrl);
-    }
-
-    @Operation(summary = "拷贝一份简历")
-    @PostMapping("/copy")
-    public Resume copyResume(@RequestHeader("uid") long uid,
-                             @RequestParam("resume_id") long resumeId) {
-        return resumeService.copyResume(uid, resumeId);
+        return resumeService.createResumeFromExistingFile(uid, templateId, resumeFileUrl, resumeName);
     }
 }

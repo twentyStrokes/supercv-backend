@@ -25,7 +25,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private AdminInterceptor adminInterceptor;
 
     @Autowired
-    ResumeOwnershipInterceptor resumeOwnershipInterceptor;
+    ResumeEditInterceptor resumeEditInterceptor;
+
+    @Autowired
+    ResumeViewInterceptor resumeViewInterceptor;
 
     @Autowired
     VipBenefitInterceptor vipBenefitInterceptor;
@@ -44,6 +47,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/v1/product/**")
                 .excludePathPatterns("/v1/resume/template/list")
                 .excludePathPatterns("/v1/resume/template/list/mock")
+                .excludePathPatterns("/v1/resume/detail") //预览简历模版可不登录
                 .excludePathPatterns("/v1/article/list")
                 .order(1);
 
@@ -64,29 +68,30 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/v1/**")
                 .order(4);
 
-        //简历归属权检查
-        registry.addInterceptor(resumeOwnershipInterceptor)
-                .addPathPatterns("/v1/resume/detail")
+        //简历归属权检查（简历的作者才有操作的权限）
+        registry.addInterceptor(resumeEditInterceptor)
                 .addPathPatterns("/v1/resume/update")
                 .addPathPatterns("/v1/resume/delete")
-                .addPathPatterns("/v1/resume/copy")
-                .addPathPatterns("/v1/resume/baseinfo/**")
-                .addPathPatterns("/v1/resume/module/**")
                 .order(5);
 
-        //仅VIP可操作的接口
-        registry.addInterceptor(vipBenefitInterceptor)
-                .addPathPatterns("/v1/resume/create")
-                .addPathPatterns("/v1/resume/create-from-file")
-                .addPathPatterns("/v1/resume/copy")
-                .addPathPatterns("/v1/resume/update")
-                .addPathPatterns("/v1/resume/baseinfo/**")
-                .addPathPatterns("/v1/resume/module/**")
+        //简历查看权限检查（简历是公开的；或建立的作者是自己）
+        registry.addInterceptor(resumeViewInterceptor)
+                .addPathPatterns("/v1/resume/detail")
+                .addPathPatterns("/v1/resume/create-from-copying")
                 .order(6);
+
+        //仅VIP可操作的接口（是否只有vip才能编辑简历）
+        registry.addInterceptor(vipBenefitInterceptor)
+                .addPathPatterns("/v1/resume/create-blank-resume")
+                .addPathPatterns("/v1/resume/create-from-copying")
+                .addPathPatterns("/v1/resume/create-from-file")
+                .addPathPatterns("/v1/resume/update")
+                .addPathPatterns("/v1/resume/delete")
+                .order(7);
 
         //文章详情权限检查
         registry.addInterceptor(articlePermissionInterceptor)
                 .addPathPatterns("/v1/article/detail")
-                .order(7);
+                .order(8);
     }
 }

@@ -21,6 +21,7 @@ public class VipController {
         return vipService.getVipInfo(uid);
     }
 
+    @Operation(summary = "检查是否为合法会员")
     @GetMapping("/check-if-valid")
     public boolean checkIfValidVip(@RequestHeader("uid") long uid) {
         return vipService.permitValidVip(uid);

@@ -4,14 +4,15 @@ import com.xzgedu.supercv.common.anotation.ViewData;
 import lombok.Data;
 
 @Data
-public class ResumeTemplate {
-    private Long id; //模板ID
-    private String name; //模板名称
+public class Template {
+    private Long id;
+    private String name;
 
     private String pageFrame; //vue页面结构
     private String pageStyle; //css格式
 
-    private Long demoResumeId; //示例简历ID
-    @ViewData
-    private String demoResumeThumbnailUrl;
+    private String thumbnailUrl;
+    private Long demoResumeId;
+
+    private boolean isPublic;
 }

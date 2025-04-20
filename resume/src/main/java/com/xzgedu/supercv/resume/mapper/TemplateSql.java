@@ -1,13 +1,13 @@
-package com.xzgedu.supercv.resume.mapper.sql;
+package com.xzgedu.supercv.resume.mapper;
 
 import java.util.List;
 import java.util.Map;
 
-public class ResumeModuleItemProvider {
-    public String selectResumeModuleItemsByModuleIds(Map<String, Object> params) {
-        StringBuilder sb = new StringBuilder("select * from resume_module_item where 1=1 ");
-        List<Long> moduleIds = (List<Long>) params.get("moduleIds");
-        sb.append(" module_id in " + buildInFilter(moduleIds));
+public class TemplateSql {
+    public String selectTemplatesByIds(Map<String, Object> params) {
+        StringBuilder sb = new StringBuilder("select * from resume_template where 1=1 ");
+        List<Long> ids = (List<Long>) params.get("ids");
+        sb.append(" and id in " + buildInFilter(ids));
         return sb.toString();
     }
 

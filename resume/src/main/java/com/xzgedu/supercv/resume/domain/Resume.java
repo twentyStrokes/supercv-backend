@@ -1,38 +1,85 @@
 package com.xzgedu.supercv.resume.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xzgedu.supercv.common.anotation.ViewData;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class Resume {
     private Long id;
+
     private Long uid;
+    @ViewData
+    private String nickName;
+    @ViewData
+    private String headImgUrl;
+
     private String name;
-    private String originalResumeUrl; // 简历文件url(pdf/word等)
-    private String thumbnailUrl; // 简历缩略图url
 
     private Long templateId;
     @ViewData
-    private String templateName;
-    @ViewData
-    private String pageFrame; //模板vue页面结构
-    @ViewData
-    private String pageStyle; //模板css文件名
+    private Template template; // 模版
 
-    private Integer pageMarginHorizontal; // 左右页边距
-    private Integer pageMarginVertical; // 上下页边距
-    private Integer moduleMargin; // 模块间距
-    private String themeColor; // 主题色
-    private Integer fontSize; // 字体大小
-    private String fontFamily; // 字体
-    private Integer lineHeight; // 行高
+    private String rawFile; // 简历文件url(pdf/word等)
 
-    private boolean templateDemo; // 是否是模板示例简历
+    @JsonIgnore
+    private String rawDataJson; // 简历json数据
+    @ViewData
+    private RawData rawData;
 
+    @JsonIgnore
+    private String extraStyleJson; // 用户额外设置的样式
     @ViewData
-    private ResumeBaseInfo baseInfo; //基本信息
-    @ViewData
-    private List<ResumeModule> modules; //各个模块
+    private ExtraStyle extraStyle;
+
+    private boolean isPublic;
+
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
+    public RawData getRawData() {
+        // 将json格式的rawDataJson转化成对象ResumeRawData
+        if (rawData == null && rawDataJson != null) {
+            try {
+                rawData = objectMapper.readValue(rawDataJson, RawData.class);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to parse rawDataJson", e);
+            }
+        }
+        return rawData;
+    }
+
+    public ExtraStyle getExtraStyle() {
+        // 将json格式的extraStyleJson转化成对象ResumeExtraStyle
+        if (extraStyle == null && extraStyleJson != null) {
+            try {
+                extraStyle = objectMapper.readValue(extraStyleJson, ExtraStyle.class);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to parse extraStyleJson", e);
+            }
+        }
+        return extraStyle;
+    }
+
+    public String getRawDataJson() {
+        if (rawDataJson == null && rawData != null) {
+            try {
+                rawDataJson = objectMapper.writeValueAsString(rawData);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to convert rawData to json string.", e);
+            }
+        }
+        return rawDataJson;
+    }
+
+    public String getExtraStyleJson() {
+        if (extraStyleJson == null && extraStyle != null) {
+            try {
+                extraStyleJson = objectMapper.writeValueAsString(extraStyle);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to convert extraStyle to json string.", e);
+            }
+        }
+        return extraStyleJson;
+    }
 }

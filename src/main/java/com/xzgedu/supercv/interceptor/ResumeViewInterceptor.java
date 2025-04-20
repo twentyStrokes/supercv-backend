@@ -11,9 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+// 简历是公开的或者简历作者是自己的时候才允许访问
 @Slf4j
 @Component
-public class ResumeOwnershipInterceptor implements HandlerInterceptor {
+public class ResumeViewInterceptor implements HandlerInterceptor {
 
     @Autowired
     private AdminService adminService;
@@ -39,7 +40,7 @@ public class ResumeOwnershipInterceptor implements HandlerInterceptor {
         Long resumeId = InterceptorUtils.parseLong(request.getParameter("resume_id"));
         if (resumeId != null) {
             Resume resume = resumeService.getResumeById(resumeId);
-            if (resume != null && resume.getUid().equals(selfUid)) {
+            if (resume != null && (resume.isPublic() || resume.getUid().equals(selfUid))) {
                 return true;
             }
         }

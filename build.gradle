@@ -96,6 +96,8 @@ allprojects {
         implementation 'org.commonmark:commonmark:0.21.0'
         implementation 'com.vladsch.flexmark:flexmark-all:0.64.0'
         implementation 'org.jsoup:jsoup:1.15.4'
+
+        implementation 'com.google.code.gson:gson:2.8.9'
     }
 
     tasks.named('test') {

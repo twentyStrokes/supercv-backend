@@ -1,10 +1,17 @@
 package com.xzgedu.supercv.resume.service;
 
+import com.xzgedu.supercv.common.exception.GenericBizException;
 import com.xzgedu.supercv.common.exception.ResumeTemplateNotFoundException;
-import com.xzgedu.supercv.resume.domain.*;
-import com.xzgedu.supercv.resume.repo.*;
+import com.xzgedu.supercv.resume.domain.Resume;
+import com.xzgedu.supercv.resume.domain.Template;
+import com.xzgedu.supercv.resume.repo.ResumeRepo;
+import com.xzgedu.supercv.resume.repo.TemplateRepo;
+import com.xzgedu.supercv.user.domain.User;
+import com.xzgedu.supercv.user.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -15,133 +22,137 @@ public class ResumeService {
     private ResumeRepo resumeRepo;
 
     @Autowired
-    private ResumeBaseInfoRepo resumeBaseInfoRepo;
+    private TemplateRepo templateRepo;
 
     @Autowired
-    private ResumeBaseInfoItemRepo resumeBaseInfoItemRepo;
-
-    @Autowired
-    private ResumeModuleRepo resumeModuleRepo;
-
-    @Autowired
-    private ResumeModuleItemRepo resumeModuleItemRepo;
-
-    @Autowired
-    private ResumeTemplateRepo resumeTemplateRepo;
+    private UserService userService;
 
     public Resume getResumeById(long id) {
-        return resumeRepo.getResumeById(id);
-    }
-
-    public List<Resume> getResumesPagination(int limitOffset, int limitSize) {
-        return resumeRepo.getResumesPagination(limitOffset, limitSize);
-    }
-
-    public int countResumes() {
-        return resumeRepo.countResumes();
+        return fillTemplate(resumeRepo.getResumeById(id));
     }
 
     public List<Resume> getResumesByUid(long uid, int limitOffset, int limitSize) {
-        return resumeRepo.getResumesByUid(uid, limitOffset, limitSize);
+        return fillUserInfos(fillTemplates(resumeRepo.selectResumesByUid(uid, limitOffset, limitSize)));
     }
 
     public int countResumesByUid(long uid) {
         return resumeRepo.countResumesByUid(uid);
     }
 
-    public boolean addResume(Resume resume) {
-        return resumeRepo.addResume(resume);
+    public List<Resume> getResumesPagination(int limitOffset, int limitSize) {
+        return fillUserInfos(fillTemplates(resumeRepo.selectResumesPagination(limitOffset, limitSize)));
     }
 
-    public boolean deleteResume(long id) {
+    public int countResumes() {
+        return resumeRepo.countResumes();
+    }
+
+    public boolean deleteResume(Long id) {
         return resumeRepo.deleteResume(id);
     }
 
-    /**
-     * 改变简历标题、模板、主题颜色、间距等等
-     */
+    public boolean insertResume(Resume resume) {
+        return resumeRepo.insertResume(resume);
+    }
+
     public boolean updateResume(Resume resume) {
         return resumeRepo.updateResume(resume);
     }
 
+    public List<Resume> fillUserInfos(List<Resume> resumes) {
+        if (resumes == null || resumes.isEmpty()) return resumes;
 
-    /**
-     * 根据模板，创建一个简历，简历中包含demo resume的所有内容
-     */
-    public Resume createResumeFromTemplateDemo(long uid, long templateId) throws ResumeTemplateNotFoundException {
-        ResumeTemplate template = resumeTemplateRepo.getTemplateById(templateId);
-        if (template == null || template.getDemoResumeId() == null) {
-            throw new ResumeTemplateNotFoundException("Failed to find resume template: " + templateId);
+        Set<Long> uidSet = new HashSet<>();
+        for (Resume resume : resumes) {
+            uidSet.add(resume.getUid());
         }
-        return copyResume(uid, template.getDemoResumeId());
+        if (!uidSet.isEmpty()) {
+            List<Long> uids = new ArrayList<>(uidSet);
+            List<User> users = userService.getUsersByUids(uids);
+            Map<Long, User> userMap = new HashMap<>();
+            for (User user : users) {
+                userMap.put(user.getId(), user);
+            }
+            for (Resume resume : resumes) {
+                User user = userMap.get(resume.getUid());
+                if (user!= null) {
+                    resume.setNickName(user.getNickName());
+                    resume.setHeadImgUrl(user.getHeadImgUrl());
+                }
+            }
+        }
+
+        return resumes;
+    }
+
+    public Resume fillTemplate(Resume resume) {
+        if (resume == null) return null;
+        List<Resume> resumes = new ArrayList<>();
+        resumes.add(resume);
+        return fillTemplates(resumes).get(0);
+    }
+
+    public List<Resume> fillTemplates(List<Resume> resumes) {
+        if (resumes == null || resumes.isEmpty()) return resumes;
+        Set<Long> templateIdSet = new HashSet<>();
+        for (Resume resume : resumes) {
+            templateIdSet.add(resume.getTemplateId());
+        }
+        Map<Long, Template> templateMap = new HashMap<>();
+        if (!templateIdSet.isEmpty()) {
+            List<Long> templateIds = new ArrayList<>(templateIdSet);
+            List<Template> templates = templateRepo.getTemplatesByIds(templateIds);
+            for (Template template : templates) {
+                templateMap.put(template.getId(), template);
+            }
+        }
+
+        for (Resume resume : resumes) {
+            resume.setTemplate(templateMap.get(resume.getTemplateId()));
+        }
+        return resumes;
     }
 
     /**
-     * 根据模板，以及用户上传的简历文件，创建一个简历
+     * 创建一个数据是空白的简历，但简历的基本模块是包含的
      */
-    public Resume createResumeFromExistingFile(long uid, long templateId, String resumeFileUrl)
-            throws ResumeTemplateNotFoundException {
-        ResumeTemplate template = resumeTemplateRepo.getTemplateById(templateId);
-        if (template == null || template.getDemoResumeId() == null) {
-            throw new ResumeTemplateNotFoundException("Failed to find resume template: " + templateId);
+    @Transactional(rollbackFor = Exception.class)
+    public Resume createBlankResume(long uid, long templateId, String newResumeName) throws GenericBizException {
+        if (StringUtils.isBlank(newResumeName)) {
+            newResumeName = "未命名简历";
         }
-
-        //TODO：从示例简历直接将specific setting拷贝过来，然后创建default modules，
-        // 解析文件，将解析后的内容存到对应的modules，没有对应的，新建module
-
-        return null;
+        Resume resume = BlankResumeFactory.create(uid, templateId, newResumeName);
+        if (!resumeRepo.insertResume(resume)) {
+            throw new GenericBizException("Failed to insert resume: " + resume);
+        }
+        return getResumeById(resume.getId());
     }
 
     /**
      * 拷贝简历
      */
-    public Resume copyResume(long uid, long resumeId) {
-        //TODO: 复制一份简历，并返回
-        return null;
+    @Transactional(rollbackFor = Exception.class)
+    public Resume copyResume(long uid, long copiedResumeId, String newResumeName) throws GenericBizException {
+        Resume resume = getResumeById(copiedResumeId);
+        resume.setUid(uid);
+        if (StringUtils.isBlank(newResumeName)) {
+            newResumeName = resume.getName() + "_副本";
+        }
+        resume.setName(newResumeName);
+        if (!resumeRepo.insertResume(resume)) {
+            throw new GenericBizException("Failed to insert resume: " + resume);
+        }
+        return getResumeById(resume.getId());
     }
 
     /**
-     * 查询完整的简历
+     * 根据模板，以及用户上传的简历文件，创建一个简历
      */
-    public Resume getResumeDetail(long uid, long id) {
-        Resume resume = resumeRepo.getResumeById(id);
-
-        // fill base info
-        ResumeBaseInfo baseInfo = resumeBaseInfoRepo.getResumeBaseInfoByResumeId(resume.getId());
-        List<ResumeBaseInfoItem> baseInfoItems = resumeBaseInfoItemRepo.getResumeBaseInfoItems(baseInfo.getId());
-        baseInfo.getItems().addAll(baseInfoItems);
-        resume.setBaseInfo(baseInfo);
-
-        // fill modules
-        List<ResumeModule> modules = resumeModuleRepo.getResumeModulesByResumeId(resume.getId());
-        List<Long> moduleIds = new ArrayList<>();
-        for (ResumeModule module : modules) {
-            moduleIds.add(module.getId());
-        }
-        List<ResumeModuleItem> moduleItems = resumeModuleItemRepo.getResumeModuleItemsByModuleIds(moduleIds);
-        Map<Long, List<ResumeModuleItem>> moduleItemMap = new HashMap<>();
-        for (ResumeModuleItem item : moduleItems) {
-            List<ResumeModuleItem> items = moduleItemMap.get(item.getModuleId());
-            if (items == null) {
-                items = new ArrayList<>();
-                moduleItemMap.put(item.getModuleId(), items);
-            }
-            items.add(item);
-        }
-        for (ResumeModule module : modules) {
-            List<ResumeModuleItem> items = moduleItemMap.get(module.getId());
-            if (items != null && !items.isEmpty()) {
-                items.sort(new Comparator<ResumeModuleItem>() {
-                    @Override
-                    public int compare(ResumeModuleItem o1, ResumeModuleItem o2) {
-                        return o1.getSortValue() - o2.getSortValue();
-                    }
-                });
-            }
-            module.getModuleItems().addAll(items);
-        }
-        resume.getModules().addAll(modules);
-
-        return resume;
+    @Transactional(rollbackFor = Exception.class)
+    public Resume createResumeFromExistingFile(long uid, long templateId, String resumeFileUrl, String newResumeName)
+            throws ResumeTemplateNotFoundException {
+        //TODO：1.解析文件，构建resume内存对象
+        //     2.将resume内存对象存储到数据库
+        return null;
     }
 }

@@ -61,15 +61,13 @@ public class ResumeIntegrationTest {
         resume1.setUid(authToken.getUid());
         resume1.setName("resume1");
         resume1.setTemplateId(1625L);
-        resume1.setThumbnailUrl("https://www.supercv.cn/resume/1/thumbnail");
-        resumeService.addResume(resume1);
+        resumeService.insertResume(resume1);
 
         Resume resume2 = new Resume();
         resume2.setUid(authToken.getUid());
         resume2.setName("resume2");
         resume2.setTemplateId(1626L);
-        resume2.setThumbnailUrl("https://www.supercv.cn/resume/2/thumbnail");
-        resumeService.addResume(resume2);
+        resumeService.insertResume(resume2);
 
         MvcResult result = mockMvc.perform(get("/v1/resume/list/mine")
                         .header("uid", String.valueOf(authToken.getUid()))
@@ -100,8 +98,7 @@ public class ResumeIntegrationTest {
         resume1.setUid(authToken.getUid());
         resume1.setName("resume1");
         resume1.setTemplateId(1625L);
-        resume1.setThumbnailUrl("https://www.supercv.cn/resume/1/thumbnail");
-        resumeService.addResume(resume1);
+        resumeService.insertResume(resume1);
 
         MvcResult result = mockMvc.perform(post("/v1/resume/delete")
                         .header("uid", String.valueOf(authToken.getUid()))
@@ -129,8 +126,7 @@ public class ResumeIntegrationTest {
         resume1.setUid(2222L);
         resume1.setName("resume1");
         resume1.setTemplateId(1625L);
-        resume1.setThumbnailUrl("https://www.supercv.cn/resume/1/thumbnail");
-        resumeService.addResume(resume1);
+        resumeService.insertResume(resume1);
 
         MvcResult result = mockMvc.perform(post("/v1/resume/delete")
                         .header("uid", String.valueOf(authToken.getUid()))
@@ -156,8 +152,7 @@ public class ResumeIntegrationTest {
         resume1.setUid(authToken.getUid());
         resume1.setName("resume1");
         resume1.setTemplateId(1625L);
-        resume1.setThumbnailUrl("https://www.supercv.cn/resume/1/thumbnail");
-        resumeService.addResume(resume1);
+        resumeService.insertResume(resume1);
 
         MvcResult result = mockMvc.perform(post("/v1/resume/update")
                         .header("uid", String.valueOf(authToken.getUid()))
@@ -166,13 +161,6 @@ public class ResumeIntegrationTest {
                         .param("resume_id", String.valueOf(resume1.getId()))
                         .param("name", "new name")
                         .param("template_id", String.valueOf(1626L))
-                        .param("page_margin_horizontal", "1")
-                        .param("page_margin_vertical", "2")
-                        .param("module_margin", "3")
-                        .param("theme_color", "new color")
-                        .param("font_size", "14")
-                        .param("font_family", "new font")
-                        .param("line_height", "20")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -187,13 +175,6 @@ public class ResumeIntegrationTest {
         assertNotNull(actualResume);
         assertEquals("new name", actualResume.getName());
         assertEquals(1626L, actualResume.getTemplateId());
-        assertEquals(1, actualResume.getPageMarginHorizontal());
-        assertEquals(2, actualResume.getPageMarginVertical());
-        assertEquals(3, actualResume.getModuleMargin());
-        assertEquals("new color", actualResume.getThemeColor());
-        assertEquals(14, actualResume.getFontSize());
-        assertEquals("new font", actualResume.getFontFamily());
-        assertEquals(20, actualResume.getLineHeight());
     }
 
     //TODO:测试获取简历详情
