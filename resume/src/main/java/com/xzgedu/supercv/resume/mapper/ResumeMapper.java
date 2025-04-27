@@ -12,13 +12,18 @@ public interface ResumeMapper {
             @Result(property = "uid", column = "uid"),
             @Result(property = "name", column = "name"),
             @Result(property = "templateId", column = "template_id"),
-            @Result(property = "rawFile", column = "raw_file"),
+            @Result(property = "fileId", column = "file_id"),
+            @Result(property = "fileUrl", column = "file_url"),
             @Result(property = "rawDataJson", column = "raw_data_json"),
             @Result(property = "extraStyleJson", column = "extra_style_json"),
             @Result(property = "isPublic", column = "is_public")
     })
     @Select("select * from resume where id=#{id} and is_deleted=false")
     Resume getResumeById(@Param("id") long id);
+
+    @ResultMap("Resume")
+    @Select("select * from resume where file_id= #{fileId} and is_deleted=false order by create_time limit 0,1")
+    Resume getResumeByFileId(@Param("fileId") long fileId);
 
     @ResultMap("Resume")
     @Select("select * from resume where uid=#{uid} and is_deleted=false " +
@@ -38,8 +43,8 @@ public interface ResumeMapper {
     int countResumes();
 
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    @Insert("INSERT INTO resume(uid, name, template_id, raw_file, raw_data_json, extra_style_json, is_public) " +
-            "values(#{uid}, #{name}, #{templateId}, #{rawFile}, #{rawDataJson}, #{extraStyleJson}, #{isPublic})")
+    @Insert("INSERT INTO resume(uid, name, template_id, file_id, file_url, raw_data_json, extra_style_json, is_public) " +
+            "values(#{uid}, #{name}, #{templateId}, #{fileId}, #{fileUrl}, #{rawDataJson}, #{extraStyleJson}, #{isPublic})")
     int insertResume(Resume resume);
 
     @Update("update resume set is_deleted=true where id=#{id}")
@@ -49,7 +54,6 @@ public interface ResumeMapper {
             "SET uid = #{uid}, " +
             "    name = #{name}, " +
             "    template_id = #{templateId}, " +
-            "    raw_file = #{rawFile}, " +
             "    raw_data_json = #{rawDataJson}, " +
             "    extra_style_json = #{extraStyleJson}, " +
             "    is_public = #{isPublic} " +

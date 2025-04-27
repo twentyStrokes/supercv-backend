@@ -1,13 +1,17 @@
 package com.xzgedu.supercv.resume.service;
 
 import com.xzgedu.supercv.common.exception.GenericBizException;
-import com.xzgedu.supercv.common.exception.ResumeTemplateNotFoundException;
+import com.xzgedu.supercv.common.exception.ResumeFileParsedFailedException;
 import com.xzgedu.supercv.resume.domain.Resume;
+import com.xzgedu.supercv.resume.domain.ResumeFile;
 import com.xzgedu.supercv.resume.domain.Template;
+import com.xzgedu.supercv.resume.enums.ResumeFileParsedStatus;
+import com.xzgedu.supercv.resume.repo.ResumeFileRepo;
 import com.xzgedu.supercv.resume.repo.ResumeRepo;
 import com.xzgedu.supercv.resume.repo.TemplateRepo;
 import com.xzgedu.supercv.user.domain.User;
 import com.xzgedu.supercv.user.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+@Slf4j
 @Service
 public class ResumeService {
 
     @Autowired
     private ResumeRepo resumeRepo;
+
+    @Autowired
+    private ResumeFileRepo resumeFileRepo;
 
     @Autowired
     private TemplateRepo templateRepo;
@@ -29,6 +37,10 @@ public class ResumeService {
 
     public Resume getResumeById(long id) {
         return fillTemplate(resumeRepo.getResumeById(id));
+    }
+
+    public Resume getResumeByFileId(long fileId) {
+        return fillTemplate(resumeRepo.getResumeByFileId(fileId));
     }
 
     public List<Resume> getResumesByUid(long uid, int limitOffset, int limitSize) {
@@ -75,7 +87,7 @@ public class ResumeService {
             }
             for (Resume resume : resumes) {
                 User user = userMap.get(resume.getUid());
-                if (user!= null) {
+                if (user != null) {
                     resume.setNickName(user.getNickName());
                     resume.setHeadImgUrl(user.getHeadImgUrl());
                 }
@@ -121,7 +133,7 @@ public class ResumeService {
         if (StringUtils.isBlank(newResumeName)) {
             newResumeName = "未命名简历";
         }
-        Resume resume = BlankResumeFactory.create(uid, templateId, newResumeName);
+        Resume resume = ResumeFactory.create(uid, templateId, newResumeName);
         if (!resumeRepo.insertResume(resume)) {
             throw new GenericBizException("Failed to insert resume: " + resume);
         }
@@ -149,10 +161,33 @@ public class ResumeService {
      * 根据模板，以及用户上传的简历文件，创建一个简历
      */
     @Transactional(rollbackFor = Exception.class)
-    public Resume createResumeFromExistingFile(long uid, long templateId, String resumeFileUrl, String newResumeName)
-            throws ResumeTemplateNotFoundException {
-        //TODO：1.解析文件，构建resume内存对象
-        //     2.将resume内存对象存储到数据库
-        return null;
+    public Resume createResumeFromFile(long uid, long templateId, String resumeFileUrl, String newResumeName)
+            throws ResumeFileParsedFailedException, GenericBizException {
+        ResumeFile resumeFile = resumeFileRepo.getResumeFileByFileUrl(resumeFileUrl);
+        if (resumeFile.getParsedJsonValid() != true
+                || resumeFile.getParsedStatus() == ResumeFileParsedStatus.FAILED.getValue()) {
+            throw new ResumeFileParsedFailedException("Failed to parse resume file: " + resumeFile.getId());
+        }
+        if (resumeFile.getParsedStatus() == ResumeFileParsedStatus.PARSING.getValue()) {
+            throw new GenericBizException("Resume file is parsing: " + resumeFile.getId());
+        }
+
+        Resume resume = new Resume();
+        resume.setUid(uid);
+        if (StringUtils.isBlank(newResumeName)) {
+            newResumeName = "未命名简历";
+        }
+        resume.setName(newResumeName);
+        resume.setTemplateId(templateId);
+        resume.setFileId(resumeFile.getId());
+        resume.setFileUrl(resumeFile.getFileUrl());
+        resume.setExtraStyle(ResumeFactory.createDefaultExtraStyle());
+        resume.setRawDataJson(resumeFile.getParsedJson());
+        resume.setPublic(false);
+        if (!resumeRepo.insertResume(resume)) {
+            throw new GenericBizException("Failed to insert resume: " + resume);
+        }
+
+        return getResumeById(resume.getId());
     }
 }

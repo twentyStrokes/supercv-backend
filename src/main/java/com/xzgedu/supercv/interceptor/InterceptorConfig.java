@@ -7,6 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Interceptor拦截器配置类
+ *
  * @author wangzheng
  */
 @Configuration
@@ -25,16 +26,25 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private AdminInterceptor adminInterceptor;
 
     @Autowired
-    ResumeEditInterceptor resumeEditInterceptor;
+    private ResumeEditInterceptor resumeEditInterceptor;
 
     @Autowired
-    ResumeViewInterceptor resumeViewInterceptor;
+    private ResumeViewInterceptor resumeViewInterceptor;
 
     @Autowired
-    VipBenefitInterceptor vipBenefitInterceptor;
+    private VipBenefitInterceptor vipBenefitInterceptor;
 
     @Autowired
-    ArticlePermissionInterceptor articlePermissionInterceptor;
+    private ResumeImportInterceptor resumeImportInterceptor;
+
+    @Autowired
+    private ResumeOptimizeInterceptor resumeOptimizeInterceptor;
+
+    @Autowired
+    private ResumeCreateInterceptor resumeCreateInterceptor;
+
+    @Autowired
+    private ArticlePermitInterceptor articlePermitInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -74,24 +84,40 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/v1/resume/delete")
                 .order(5);
 
-        //简历查看权限检查（简历是公开的；或建立的作者是自己）
+        //简历查看权限检查（简历是公开的；或简历的作者是自己）
         registry.addInterceptor(resumeViewInterceptor)
                 .addPathPatterns("/v1/resume/detail")
                 .addPathPatterns("/v1/resume/create-from-copying")
                 .order(6);
 
-        //仅VIP可操作的接口（是否只有vip才能编辑简历）
+        //简历编辑权限检查（会员以及试用会员才能编辑简历）
         registry.addInterceptor(vipBenefitInterceptor)
                 .addPathPatterns("/v1/resume/create-blank-resume")
                 .addPathPatterns("/v1/resume/create-from-copying")
                 .addPathPatterns("/v1/resume/create-from-file")
                 .addPathPatterns("/v1/resume/update")
                 .addPathPatterns("/v1/resume/delete")
+                .addPathPatterns("/v1/resume/file/**")
+                .addPathPatterns("/v1/resume/optimize/**")
                 .order(7);
 
-        //文章详情权限检查
-        registry.addInterceptor(articlePermissionInterceptor)
-                .addPathPatterns("/v1/article/detail")
+        registry.addInterceptor(resumeCreateInterceptor)
+                .addPathPatterns("/v1/resume/create-blank-resume")
+                .addPathPatterns("/v1/resume/create-from-copying")
+                .addPathPatterns("/v1/resume/create-from-file")
                 .order(8);
+
+        registry.addInterceptor(resumeImportInterceptor)
+                .addPathPatterns("/v1/resume/file/parse")
+                .order(9);
+
+        registry.addInterceptor(resumeOptimizeInterceptor)
+                .addPathPatterns("/v1/resume/optimize/**")
+                .order(10);
+
+        //文章详情权限检查（未过期的正式会员，非试用会员，或者文章是试读的）
+        registry.addInterceptor(articlePermitInterceptor)
+                .addPathPatterns("/v1/article/detail")
+                .order(11);
     }
 }

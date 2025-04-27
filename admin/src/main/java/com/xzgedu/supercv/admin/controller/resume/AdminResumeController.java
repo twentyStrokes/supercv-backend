@@ -36,7 +36,7 @@ public class AdminResumeController {
 
     @Operation(summary = "分页查询简历(按用户)")
     @GetMapping("/list/user")
-    public Map<String, Object> listResumesByUid(@RequestParam("uid") long uid,
+    public Map<String, Object> listResumesByUid(@RequestParam("filter_uid") long uid,
                                                 @RequestParam("page_no") int pageNo,
                                                 @RequestParam("page_size") int pageSize) {
         int limitOffset = (pageNo - 1) * pageSize;
@@ -57,6 +57,7 @@ public class AdminResumeController {
         }
     }
 
+    @Operation(summary = "更新简历是否公开")
     @PostMapping("/update/public")
     public void updateResumePublic(@RequestParam("resume_id") long resumeId,
                                    @RequestParam("is_public") boolean isPublic) throws GenericBizException {

@@ -1,6 +1,7 @@
 package com.xzgedu.supercv.resume.controller;
 
 import com.xzgedu.supercv.common.exception.GenericBizException;
+import com.xzgedu.supercv.common.exception.ResumeFileParsedFailedException;
 import com.xzgedu.supercv.common.exception.ResumeTemplateNotFoundException;
 import com.xzgedu.supercv.resume.domain.Resume;
 import com.xzgedu.supercv.resume.service.ResumeService;
@@ -100,11 +101,11 @@ public class ResumeController {
 
     @Operation(summary = "根据模板，以及用户上传的简历文件，创建一个简历")
     @PostMapping("/create-from-file")
-    public Resume createResumeFromExistingFile(@RequestHeader("uid") long uid,
-                                               @RequestParam("template_id") long templateId,
-                                               @RequestParam("resume_file_url") String resumeFileUrl,
-                                               @RequestParam(value = "resume_name", required = false) String resumeName)
-            throws ResumeTemplateNotFoundException {
-        return resumeService.createResumeFromExistingFile(uid, templateId, resumeFileUrl, resumeName);
+    public Resume createResumeFromFile(@RequestHeader("uid") long uid,
+                                       @RequestParam("template_id") long templateId,
+                                       @RequestParam("resume_file_url") String resumeFileUrl,
+                                       @RequestParam(value = "resume_name", required = false) String resumeName)
+            throws ResumeFileParsedFailedException, GenericBizException {
+        return resumeService.createResumeFromFile(uid, templateId, resumeFileUrl, resumeName);
     }
 }

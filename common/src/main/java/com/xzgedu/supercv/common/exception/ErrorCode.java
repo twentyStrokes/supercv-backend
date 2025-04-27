@@ -37,6 +37,9 @@ public enum ErrorCode {
     ARTICLE_TITLE_INVALID(30403, "帖子标题不符合要求(长度限于1个字~60个字)"),
     ARTICLE_CONTENT_INVALID(30404, "帖子内容不符合要求(长度限于1个字~30000字)"),
 
+    // 简历解析
+    RESUME_FILE_PARSED_FAILED(30501, "简历解析失败"),
+
     /**
      * ******** 4xxxx不应该出现的业务异常 ***********
      */

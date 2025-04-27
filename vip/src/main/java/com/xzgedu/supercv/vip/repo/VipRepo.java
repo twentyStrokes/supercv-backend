@@ -26,6 +26,26 @@ public class VipRepo {
         return vipMapper.updateVip(vip) == 1;
     }
 
+    public boolean decreaseResumeImportLeftNum(long uid) {
+        return vipMapper.decreaseResumeImportLeftNum(uid) == 1;
+    }
+
+    public boolean decreaseResumeExportLeftNum(long uid) {
+        return vipMapper.decreaseResumeExportLeftNum(uid) == 1;
+    }
+
+    public boolean decreaseResumeCreateLeftNum(long uid) {
+        return vipMapper.decreaseResumeCreateLeftNum(uid) == 1;
+    }
+
+    public boolean decreaseAiAnalysisLeftNum(long uid) {
+        return vipMapper.decreaseResumeAnalyzeLeftNum(uid) == 1;
+    }
+
+    public boolean decreaseAiOptimizeLeftNum(long uid) {
+        return vipMapper.decreaseResumeOptimizeLeftNum(uid) == 1;
+    }
+
     public List<Vip> getVipsByPagination(int limitOffset, int limitSize) {
         return vipMapper.selectVips(limitOffset, limitSize);
     }

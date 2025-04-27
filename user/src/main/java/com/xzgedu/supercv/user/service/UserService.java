@@ -3,9 +3,11 @@ package com.xzgedu.supercv.user.service;
 import com.xzgedu.supercv.common.exception.BindTelDuplicatedException;
 import com.xzgedu.supercv.common.exception.SmsCodeExpiredException;
 import com.xzgedu.supercv.common.exception.SmsCodeUnmatchedException;
+import com.xzgedu.supercv.event.UserRegEvent;
 import com.xzgedu.supercv.user.domain.User;
 import com.xzgedu.supercv.user.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,8 +22,16 @@ public class UserService {
     @Autowired
     private SmsService smsService;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
     public boolean addUser(User user) {
-        return userRepo.addUser(user);
+        boolean success = userRepo.addUser(user);
+        // 将会触发vip试用期授权
+        if (success) {
+            eventPublisher.publishEvent(new UserRegEvent(user.getId()));
+        }
+        return success;
     }
 
     public User getUserById(Long uid) {

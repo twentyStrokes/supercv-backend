@@ -58,8 +58,8 @@ public class AdminProductIntegrationTest {
         product.setOriginalPrice(new BigDecimal("100.00"));
         product.setDiscountPrice(new BigDecimal("90.00"));
         product.setDurationDays(30);
-        product.setAiAnalysisNum(10);
-        product.setAiOptimizationNum(5);
+        product.setResumeAnalyzeNum(10);
+        product.setResumeOptimizeNum(5);
         product.setSortValue(1);
 
         MvcResult result = mockMvc.perform(post("/admin/product/add")
@@ -69,8 +69,8 @@ public class AdminProductIntegrationTest {
                         .param("original_price", product.getOriginalPrice().toString())
                         .param("discount_price", product.getDiscountPrice().toString())
                         .param("duration_days", String.valueOf(product.getDurationDays()))
-                        .param("ai_analysis_num", String.valueOf(product.getAiAnalysisNum()))
-                        .param("ai_optimization_num", String.valueOf(product.getAiOptimizationNum()))
+                        .param("ai_analysis_num", String.valueOf(product.getResumeAnalyzeNum()))
+                        .param("ai_optimization_num", String.valueOf(product.getResumeOptimizeNum()))
                         .param("sort_value", String.valueOf(product.getSortValue()))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -87,8 +87,8 @@ public class AdminProductIntegrationTest {
         assertEquals(product.getOriginalPrice(), resProduct.getOriginalPrice());
         assertEquals(product.getDiscountPrice(), resProduct.getDiscountPrice());
         assertEquals(product.getDurationDays(), resProduct.getDurationDays());
-        assertEquals(product.getAiAnalysisNum(), resProduct.getAiAnalysisNum());
-        assertEquals(product.getAiOptimizationNum(), resProduct.getAiOptimizationNum());
+        assertEquals(product.getResumeAnalyzeNum(), resProduct.getResumeAnalyzeNum());
+        assertEquals(product.getResumeOptimizeNum(), resProduct.getResumeOptimizeNum());
     }
 
     @Test
@@ -99,8 +99,8 @@ public class AdminProductIntegrationTest {
         product.setOriginalPrice(new BigDecimal("100.00"));
         product.setDiscountPrice(new BigDecimal("90.00"));
         product.setDurationDays(30);
-        product.setAiAnalysisNum(10);
-        product.setAiOptimizationNum(5);
+        product.setResumeAnalyzeNum(10);
+        product.setResumeOptimizeNum(5);
         product.setSortValue(1);
 
         MvcResult addResult = mockMvc.perform(post("/admin/product/add")
@@ -110,8 +110,8 @@ public class AdminProductIntegrationTest {
                         .param("original_price", product.getOriginalPrice().toString())
                         .param("discount_price", product.getDiscountPrice().toString())
                         .param("duration_days", String.valueOf(product.getDurationDays()))
-                        .param("ai_analysis_num", String.valueOf(product.getAiAnalysisNum()))
-                        .param("ai_optimization_num", String.valueOf(product.getAiOptimizationNum()))
+                        .param("ai_analysis_num", String.valueOf(product.getResumeAnalyzeNum()))
+                        .param("ai_optimization_num", String.valueOf(product.getResumeOptimizeNum()))
                         .param("sort_value", String.valueOf(product.getSortValue()))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -141,8 +141,8 @@ public class AdminProductIntegrationTest {
         product.setOriginalPrice(new BigDecimal("150.00"));
         product.setDiscountPrice(new BigDecimal("130.00"));
         product.setDurationDays(60);
-        product.setAiAnalysisNum(20);
-        product.setAiOptimizationNum(10);
+        product.setResumeAnalyzeNum(20);
+        product.setResumeOptimizeNum(10);
         product.setSortValue(1);
 
         // Add a product first
@@ -153,8 +153,8 @@ public class AdminProductIntegrationTest {
                         .param("original_price", product.getOriginalPrice().toString())
                         .param("discount_price", product.getDiscountPrice().toString())
                         .param("duration_days", String.valueOf(product.getDurationDays()))
-                        .param("ai_analysis_num", String.valueOf(product.getAiAnalysisNum()))
-                        .param("ai_optimization_num", String.valueOf(product.getAiOptimizationNum()))
+                        .param("ai_analysis_num", String.valueOf(product.getResumeAnalyzeNum()))
+                        .param("ai_optimization_num", String.valueOf(product.getResumeOptimizeNum()))
                         .param("sort_value", String.valueOf(product.getSortValue()))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -203,8 +203,8 @@ public class AdminProductIntegrationTest {
         assertEquals(new BigDecimal("200.00"), updatedProduct.getOriginalPrice());
         assertEquals(new BigDecimal("180.00"), updatedProduct.getDiscountPrice());
         assertEquals(90, updatedProduct.getDurationDays());
-        assertEquals(30, updatedProduct.getAiAnalysisNum());
-        assertEquals(15, updatedProduct.getAiOptimizationNum());
+        assertEquals(30, updatedProduct.getResumeAnalyzeNum());
+        assertEquals(15, updatedProduct.getResumeOptimizeNum());
     }
 
     @Test
@@ -215,8 +215,8 @@ public class AdminProductIntegrationTest {
         product.setOriginalPrice(new BigDecimal("100.00"));
         product.setDiscountPrice(new BigDecimal("90.00"));
         product.setDurationDays(30);
-        product.setAiAnalysisNum(10);
-        product.setAiOptimizationNum(5);
+        product.setResumeAnalyzeNum(10);
+        product.setResumeOptimizeNum(5);
         product.setSortValue(1);
 
         MvcResult addResult = mockMvc.perform(post("/admin/product/add")
@@ -226,8 +226,8 @@ public class AdminProductIntegrationTest {
                         .param("original_price", product.getOriginalPrice().toString())
                         .param("discount_price", product.getDiscountPrice().toString())
                         .param("duration_days", String.valueOf(product.getDurationDays()))
-                        .param("ai_analysis_num", String.valueOf(product.getAiAnalysisNum()))
-                        .param("ai_optimization_num", String.valueOf(product.getAiOptimizationNum()))
+                        .param("ai_analysis_num", String.valueOf(product.getResumeAnalyzeNum()))
+                        .param("ai_optimization_num", String.valueOf(product.getResumeOptimizeNum()))
                         .param("sort_value", String.valueOf(product.getSortValue()))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

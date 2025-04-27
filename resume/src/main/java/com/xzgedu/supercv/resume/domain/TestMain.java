@@ -1,8 +1,5 @@
 package com.xzgedu.supercv.resume.domain;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xzgedu.supercv.resume.service.BlankResumeFactory;
-
 public class TestMain {
 //    public static void main(String[] args) {
 //        Resume resume = BlankResumeFactory.create(1, 1, "test");

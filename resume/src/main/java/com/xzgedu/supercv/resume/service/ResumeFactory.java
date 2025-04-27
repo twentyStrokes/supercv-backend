@@ -7,24 +7,32 @@ import com.xzgedu.supercv.resume.enums.DefaultModule;
 import com.xzgedu.supercv.resume.enums.DefaultProfileItem;
 import com.xzgedu.supercv.resume.enums.PhotoLayout;
 
-public class BlankResumeFactory {
+public class ResumeFactory {
     public static final Resume create(long uid, long templateId, String resumeName) {
         Resume resume = new Resume();
         resume.setUid(uid);
         resume.setName(resumeName);
         resume.setTemplateId(templateId);
         resume.setRawData(new RawData());
-        resume.setExtraStyle(new ExtraStyle());
+        resume.setExtraStyle(createDefaultExtraStyle());
+        resume.setRawData(createDefaultRawData());
+        return resume;
+    }
 
-        // default specific setting
-        ExtraStyle extraStyle = resume.getExtraStyle();
+    public static final ExtraStyle createDefaultExtraStyle() {
+        ExtraStyle extraStyle = new ExtraStyle();
         extraStyle.setPageMarginHorizontal(30);
         extraStyle.setPageMarginVertical(30);
         extraStyle.setModuleMargin(20);
         extraStyle.setThemeColor("#000000");
-        extraStyle.setFontFamily("Microsoft YaHei");
+        extraStyle.setFontFamily("");
         extraStyle.setContentFontSize(15);
         extraStyle.setContentLineHeight(2.0);
+        return extraStyle;
+    }
+
+    public static final RawData createDefaultRawData() {
+        RawData rawData = new RawData();
 
         // default profile
         Profile profile = new Profile();
@@ -40,7 +48,7 @@ public class BlankResumeFactory {
             keyValuePair.setLabel(defaultItem.getName());
             profile.getItems().add(keyValuePair);
         }
-        resume.getRawData().setProfile(profile);
+        rawData.setProfile(profile);
 
         // default modules
         for (DefaultModule defaultModule : DefaultModule.values()) {
@@ -50,10 +58,10 @@ public class BlankResumeFactory {
             module.setDefaultModule(true);
             module.setEnabled(true);
             module.getItems().add(createBlankResumeModuleItem(defaultModule)); //添加一条moduleItem数据
-            resume.getRawData().getModules().add(module);
+            rawData.getModules().add(module);
         }
 
-        return resume;
+        return rawData;
     }
 
     public static final ModuleItem createBlankResumeModuleItem(DefaultModule moduleType) {
@@ -98,5 +106,4 @@ public class BlankResumeFactory {
 
         return item;
     }
-
 }

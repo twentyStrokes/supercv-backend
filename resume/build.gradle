@@ -9,4 +9,5 @@ jar {
 dependencies {
     implementation project(':common')
     implementation project(':user')
+    implementation project(':llm')
 }

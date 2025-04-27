@@ -7,9 +7,9 @@ import com.xzgedu.supercv.order.enums.GrantStatus;
 import com.xzgedu.supercv.order.repo.OrderRepo;
 import com.xzgedu.supercv.product.domain.Product;
 import com.xzgedu.supercv.product.service.ProductService;
+import com.xzgedu.supercv.vip.domain.VipPrivilege;
 import com.xzgedu.supercv.vip.service.VipService;
 import lombok.extern.slf4j.Slf4j;
-import org.mockito.internal.matchers.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -95,8 +95,13 @@ public class OrderService {
 
     public void grant(long uid, long orderId, long productId) throws PaymentException {
         Product product = productService.getProductById(productId);
-        if (!vipService.renewVip(uid, product.getDurationDays(),
-                product.getAiAnalysisNum(), product.getAiOptimizationNum())) {
+        VipPrivilege vipPrivilege = new VipPrivilege();
+        vipPrivilege.setResumeImportNum(product.getResumeImportNum());
+        vipPrivilege.setResumeExportNum(product.getResumeExportNum());
+        vipPrivilege.setResumeCreateNum(product.getResumeCreateNum());
+        vipPrivilege.setResumeAnalyzeNum(product.getResumeAnalyzeNum());
+        vipPrivilege.setResumeOptimizeNum(product.getResumeOptimizeNum());
+        if (!vipService.renewVip(uid, product.getDurationDays(), vipPrivilege, false)) {
             throw new PaymentException("Failed to renew VIP for user: " + uid);
         }
         if (!orderRepo.updateGrantStatus(orderId, GrantStatus.SUCCESS.getValue())) {

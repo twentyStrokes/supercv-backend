@@ -7,6 +7,7 @@ import java.util.Date;
 
 @Data
 public class Vip {
+    private long id;
     private Long uid;
     @ViewData
     private String nickName;
@@ -14,8 +15,13 @@ public class Vip {
     private String headImgUrl;
 
     private Date expireTime;
-    private Integer aiAnalysisLeftNum;
-    private Integer aiOptimizationLeftNum;
+    private int resumeImportLeftNum;
+    private int resumeExportLeftNum;
+    private int resumeCreateLeftNum;
+    private int resumeAnalyzeLeftNum;
+    private int resumeOptimizeLeftNum;
+
+    private boolean isTrial;
 
     private Date updateTime;
 }

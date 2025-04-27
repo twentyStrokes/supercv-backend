@@ -21,7 +21,8 @@ public class Resume {
     @ViewData
     private Template template; // 模版
 
-    private String rawFile; // 简历文件url(pdf/word等)
+    private Long fileId;
+    private String fileUrl; // 简历文件url(pdf/word等)
 
     @JsonIgnore
     private String rawDataJson; // 简历json数据

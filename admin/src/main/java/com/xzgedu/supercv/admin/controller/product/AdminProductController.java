@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Tag(name = "产品管理")
 @RequestMapping("/admin/product")
@@ -25,8 +24,11 @@ public class AdminProductController {
                               @RequestParam("original_price") BigDecimal originalPrice,
                               @RequestParam("discount_price") BigDecimal discountPrice,
                               @RequestParam("duration_days") int durationDays,
-                              @RequestParam("ai_analysis_num") int aiAnalysisNum,
-                              @RequestParam("ai_optimization_num") int aiOptimizationNum,
+                              @RequestParam("resume_import_num") int resumeImportNum,
+                              @RequestParam("resume_export_num") int resumeExportNum,
+                              @RequestParam("resume_create_num") int resumeCreateNum,
+                              @RequestParam("resume_analyze_num") int resumeAnalyzeNum,
+                              @RequestParam("resume_optimize_num") int resumeOptimizeNum,
                               @RequestParam("sort_value") int sortValue)
             throws GenericBizException {
         Product product = new Product();
@@ -34,8 +36,11 @@ public class AdminProductController {
         product.setOriginalPrice(originalPrice);
         product.setDiscountPrice(discountPrice);
         product.setDurationDays(durationDays);
-        product.setAiAnalysisNum(aiAnalysisNum);
-        product.setAiOptimizationNum(aiOptimizationNum);
+        product.setResumeImportNum(resumeImportNum);
+        product.setResumeExportNum(resumeExportNum);
+        product.setResumeCreateNum(resumeCreateNum);
+        product.setResumeAnalyzeNum(resumeAnalyzeNum);
+        product.setResumeOptimizeNum(resumeOptimizeNum);
         product.setSortValue(sortValue);
         if (productService.addProduct(product)) return product;
         throw new GenericBizException("Failed to add product: " + product.toString());
@@ -48,8 +53,11 @@ public class AdminProductController {
                               @RequestParam("original_price") BigDecimal originalPrice,
                               @RequestParam("discount_price") BigDecimal discountPrice,
                               @RequestParam("duration_days") int durationDays,
-                              @RequestParam("ai_analysis_num") int aiAnalysisNum,
-                              @RequestParam("ai_optimization_num") int aiOptimizationNum,
+                              @RequestParam("resume_import_num") int resumeImportNum,
+                              @RequestParam("resume_export_num") int resumeExportNum,
+                              @RequestParam("resume_create_num") int resumeCreateNum,
+                              @RequestParam("resume_analyze_num") int resumeAnalyzeNum,
+                              @RequestParam("resume_optimize_num") int resumeOptimizeNum,
                               @RequestParam("sort_value") int sortValue)
             throws GenericBizException {
         Product product = new Product();
@@ -58,8 +66,11 @@ public class AdminProductController {
         product.setOriginalPrice(originalPrice);
         product.setDiscountPrice(discountPrice);
         product.setDurationDays(durationDays);
-        product.setAiAnalysisNum(aiAnalysisNum);
-        product.setAiOptimizationNum(aiOptimizationNum);
+        product.setResumeImportNum(resumeImportNum);
+        product.setResumeExportNum(resumeExportNum);
+        product.setResumeCreateNum(resumeCreateNum);
+        product.setResumeAnalyzeNum(resumeAnalyzeNum);
+        product.setResumeOptimizeNum(resumeOptimizeNum);
         product.setSortValue(sortValue);
         if (productService.updateProduct(product)) return;
         throw new GenericBizException("Failed to update product: " + product.toString());

@@ -11,6 +11,7 @@ apply plugin: 'io.spring.dependency-management'
 
 dependencies {
     implementation project(':common')
+    implementation project(':event')
     implementation project(':user')
     implementation project(':resume')
     implementation project(':admin')
@@ -19,6 +20,7 @@ dependencies {
     implementation project(':product')
     implementation project(':order')
     implementation project(':oss')
+    implementation project(':llm')
 }
 
 allprojects {
@@ -98,6 +100,14 @@ allprojects {
         implementation 'org.jsoup:jsoup:1.15.4'
 
         implementation 'com.google.code.gson:gson:2.8.9'
+
+        // https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
+        implementation("org.apache.pdfbox:pdfbox:3.0.4")
+
+        // https://mvnrepository.com/artifact/com.alibaba/dashscope-sdk-java
+        implementation("com.alibaba:dashscope-sdk-java:2.19.2")  {
+            exclude group: 'org.slf4j', module: 'slf4j-simple'
+        }
     }
 
     tasks.named('test') {

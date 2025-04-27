@@ -17,6 +17,10 @@ public class ResumeRepo {
         return resumeMapper.getResumeById(id);
     }
 
+    public Resume getResumeByFileId(long fileId) {
+        return resumeMapper.getResumeByFileId(fileId);
+    }
+
     public List<Resume> selectResumesByUid(long uid, int limitOffset, int limitSize) {
         return resumeMapper.selectResumesByUid(uid, limitOffset, limitSize);
     }

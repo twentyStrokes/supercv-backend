@@ -75,8 +75,8 @@ public class OrderIntegrationTest {
         product.setOriginalPrice(BigDecimal.valueOf(10.0));
         product.setDiscountPrice(BigDecimal.valueOf(9.9));
         product.setDurationDays(30);
-        product.setAiAnalysisNum(5);
-        product.setAiOptimizationNum(3);
+        product.setResumeAnalyzeNum(5);
+        product.setResumeOptimizeNum(3);
         productService.addProduct(product);
 
         //添加支付渠道

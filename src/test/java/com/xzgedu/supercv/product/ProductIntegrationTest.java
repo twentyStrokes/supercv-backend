@@ -53,8 +53,8 @@ public class ProductIntegrationTest {
         product.setOriginalPrice(new BigDecimal("9.99"));
         product.setDiscountPrice(new BigDecimal("8.99"));
         product.setDurationDays(30);
-        product.setAiAnalysisNum(10);
-        product.setAiOptimizationNum(20);
+        product.setResumeAnalyzeNum(10);
+        product.setResumeOptimizeNum(20);
         productService.addProduct(product);
 
         MvcResult result = mockMvc.perform(get("/v1/product/info")
@@ -75,7 +75,7 @@ public class ProductIntegrationTest {
         assertEquals(product.getOriginalPrice(), resProduct.getOriginalPrice());
         assertEquals(product.getDiscountPrice(), resProduct.getDiscountPrice());
         assertEquals(product.getDurationDays(), resProduct.getDurationDays());
-        assertEquals(product.getAiAnalysisNum(), resProduct.getAiAnalysisNum());
-        assertEquals(product.getAiOptimizationNum(), resProduct.getAiOptimizationNum());
+        assertEquals(product.getResumeAnalyzeNum(), resProduct.getResumeAnalyzeNum());
+        assertEquals(product.getResumeOptimizeNum(), resProduct.getResumeOptimizeNum());
     }
 }

@@ -55,6 +55,7 @@ public class AdminTemplateController {
         }
     }
 
+    @Operation(summary = "更新简历模板缩略图")
     @PostMapping("/update/thumbnail-url")
     public void updateTemplateThumbnailUrl(@RequestParam("template_id") long id,
                                            @RequestParam(value = "thumbnail_url", required = false) String thumbnailUrl)

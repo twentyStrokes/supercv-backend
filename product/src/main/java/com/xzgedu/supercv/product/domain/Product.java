@@ -11,7 +11,10 @@ public class Product {
     private BigDecimal originalPrice;
     private BigDecimal discountPrice;
     private int durationDays;
-    private int aiAnalysisNum;
-    private int aiOptimizationNum;
+    private int resumeImportNum;
+    private int resumeExportNum;
+    private int resumeCreateNum;
+    private int resumeAnalyzeNum;
+    private int resumeOptimizeNum;
     private int sortValue;
 }

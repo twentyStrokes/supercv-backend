@@ -8,6 +8,7 @@ import com.xzgedu.supercv.advice.ResponseData;
 import com.xzgedu.supercv.common.exception.ErrorCode;
 import com.xzgedu.supercv.user.domain.AuthToken;
 import com.xzgedu.supercv.vip.domain.Vip;
+import com.xzgedu.supercv.vip.domain.VipPrivilege;
 import com.xzgedu.supercv.vip.service.VipService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,13 @@ public class VipIntegrationTest {
         long uid = authToken.getUid();
 
         //第一次购买vip
-        vipService.renewVip(uid, 30, 10, 20);
+        VipPrivilege vipPrivilege = new VipPrivilege();
+        vipPrivilege.setResumeImportNum(10);
+        vipPrivilege.setResumeExportNum(10);
+        vipPrivilege.setResumeCreateNum(10);
+        vipPrivilege.setResumeAnalyzeNum(10);
+        vipPrivilege.setResumeOptimizeNum(20);
+        vipService.renewVip(uid, 30, vipPrivilege, false);
 
         MvcResult result = mockMvc.perform(get("/v1/vip/info")
                         .header("uid", String.valueOf(uid))
@@ -71,7 +78,10 @@ public class VipIntegrationTest {
         assertNotNull(responseData.getData());
         Vip vip = (Vip) responseData.getData();
         assertEquals(uid, vip.getUid());
-        assertEquals(10, vip.getAiAnalysisLeftNum());
-        assertEquals(20, vip.getAiOptimizationLeftNum());
+        assertEquals(10, vip.getResumeImportLeftNum());
+        assertEquals(10, vip.getResumeExportLeftNum());
+        assertEquals(10, vip.getResumeCreateLeftNum());
+        assertEquals(10, vip.getResumeAnalyzeLeftNum());
+        assertEquals(20, vip.getResumeOptimizeLeftNum());
     }
 }

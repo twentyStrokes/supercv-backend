@@ -49,8 +49,11 @@ create table if not exists `product` (
     `original_price` decimal(10, 2) NOT NULL COMMENT '原价',
     `discount_price` decimal(10, 2) NOT NULL COMMENT '折扣价',
     `duration_days` int NOT NULL DEFAULT 0 COMMENT '会员时长(天)',
-    `ai_analysis_num` int DEFAULT 0 COMMENT '智能评分调用次数',
-    `ai_optimization_num` int DEFAULT 0 COMMENT '智能优化调用次数',
+    `resume_import_num` int DEFAULT 0 COMMENT '简历导入调用次数',
+    `resume_export_num` int DEFAULT 0 COMMENT '简历导出调用次数',
+    `resume_create_num` int DEFAULT 0 COMMENT '简历创建调用次数',
+    `resume_analyze_num` int DEFAULT 0 COMMENT '智能评分调用次数',
+    `resume_optimize_num` int DEFAULT 0 COMMENT '智能优化调用次数',
     `sort_value` int NOT NULL COMMENT '排序值',
     `is_deleted` boolean DEFAULT FALSE COMMENT '是否删除 false为否 true为是',
     `create_time` datetime NOT NULL DEFAULT current_timestamp COMMENT '创建时间',
@@ -63,8 +66,12 @@ create table if not exists `vip` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     `uid` bigint NOT NULL,
     `expire_time` datetime NOT NULL COMMENT '过期时间',
-    `ai_analysis_left_num` int NOT NULL COMMENT 'AI分析剩余次数',
-    `ai_optimization_left_num` int NOT NULL COMMENT 'AI优化剩余次数',
+    `resume_import_left_num` int NOT NULL DEFAULT 0 COMMENT '简历导入剩余次数',
+    `resume_export_left_num` int NOT NULL DEFAULT 0 COMMENT '简历导出剩余次数',
+    `resume_create_left_num` int NOT NULL DEFAULT 0 COMMENT '简历创建剩余次数',
+    `resume_analyze_left_num` int NOT NULL DEFAULT 0 COMMENT 'AI分析剩余次数',
+    `resume_optimize_left_num` int NOT NULL DEFAULT 0 COMMENT 'AI优化剩余次数',
+    `is_trial` boolean DEFAULT FALSE COMMENT '是否试用',
     `create_time` datetime NOT NULL DEFAULT current_timestamp COMMENT '创建时间',
     `update_time` datetime NOT NULL DEFAULT current_timestamp on update current_timestamp COMMENT '更新时间',
     primary key (`id`),
@@ -86,18 +93,53 @@ create table if not exists `resume_template` (
     primary key (`id`)
 );
 
+-- 简历
 create table if not exists `resume` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '简历ID',
     `uid` bigint NOT NULL COMMENT '简历归属用户ID',
     `name` varchar(128) NOT NULL COMMENT '简历名称',
     `template_id` bigint NOT NULL COMMENT '模板ID',
-    `raw_file` varchar(256) COMMENT '简历文件url(pdf/word等)',
-    `raw_data_json` longtext COMMENT '简历原文件内容',
+    `file_id` bigint COMMENT '简历文件ID',
+    `file_url` varchar(256) COMMENT '冗余字段：简历文件url(pdf/word等)',
+    `raw_data_json` longtext COMMENT '冗余字段：简历原文件内容',
     `extra_style_json` text COMMENT '简历特别指定样式',
     `is_public` boolean DEFAULT FALSE COMMENT '是否公开',
     `is_deleted` boolean DEFAULT FALSE COMMENT '是否已删除',
     `create_time` datetime NOT NULL DEFAULT current_timestamp COMMENT '创建时间',
     `update_time` datetime NOT NULL DEFAULT current_timestamp on update current_timestamp COMMENT '更新时间',
+    primary key (`id`)
+);
+
+-- 简历文件解析结果
+create table if not exists `resume_file` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '简历文件ID',
+    `uid` bigint NOT NULL COMMENT '简历文件归属用户ID',
+    `file_url` varchar(128) NOT NULL COMMENT '简历文件url',
+    `parsed_text` longtext COMMENT '简历纯文本内容',
+    `parsed_json` longtext COMMENT '格式化为json',
+    `parsed_json_valid` boolean COMMENT 'json是否符合Resume类定义',
+    `parsed_error_msg` varchar(2048) COMMENT '解析失败原因',
+    `parsed_status` tinyint DEFAULT 1 COMMENT '解析状态', -- 1-解析中 2-完成 3-失败
+    `create_time` datetime NOT NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time` datetime NOT NULL DEFAULT current_timestamp on update current_timestamp COMMENT '更新时间',
+    primary key (`id`),
+    unique (`file_url`)
+);
+
+-- 记录llm调用详情
+create table if not exists `llm_log` (
+    `id` bigint NOT NULL AUTO_INCREMENT,
+    `uid` bigint NOT NULL COMMENT '用户ID',
+    `model_type` tinyint NOT NULL COMMENT '模型类型',
+    `prompt_type` tinyint NOT NULL COMMENT '请求类型',
+    `input` longtext NOT NULL COMMENT '输入',
+    `output` longtext COMMENT '输出',
+    `input_token` int COMMENT '输入token',
+    `output_token` int COMMENT '输出token',
+    `cost_time` int COMMENT '耗时，单位毫秒ms',
+    `applied` boolean COMMENT '是否应用',
+    `create_time` datetime NOT NULL DEFAULT current_timestamp,
+    `update_time` datetime NOT NULL DEFAULT current_timestamp on update current_timestamp,
     primary key (`id`)
 );
 
