@@ -8,7 +8,7 @@ import java.util.Date;
 public class LLMLog {
     private long id;
     private long uid;
-    private int modelType;
+    private long modelId;
     private int promptType;
     private String input;
     private String output;

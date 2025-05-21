@@ -24,7 +24,8 @@ public enum LLMType {
         return name;
     }
 
-    public static LLMType of(int value) {
+    public static LLMType of(Integer value) {
+        if (value == null) return null;
         for (LLMType modelType : values()) {
             if (modelType.getValue() == value) {
                 return modelType;

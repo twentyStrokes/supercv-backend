@@ -80,7 +80,7 @@ public class ResumeFileService {
             ObjectMapper objectMapper = new ObjectMapper();
             String blankResumeDataJson = objectMapper.writeValueAsString(blankResumeData);
             LLMPrompt prompt = LLMPromptBuilder.generateText2JsonPrompt(parsedText, blankResumeDataJson);
-            String parsedJson = llmFactory.getLLM(LLMType.QIANWEN).call(uid, prompt);
+            String parsedJson = llmFactory.getEnabledLLM().call(uid, prompt);
             resumeFile.setParsedJson(parsedJson);
 
             // 3.校验JSON格式

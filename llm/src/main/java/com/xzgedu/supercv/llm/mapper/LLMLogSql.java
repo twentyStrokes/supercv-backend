@@ -8,7 +8,7 @@ import java.util.Map;
 public class LLMLogSql {
 
     public String selectLLMLogs(Map<String, Object> params) {
-        StringBuilder sb = new StringBuilder("select id, uid, model_type, prompt_type, " +
+        StringBuilder sb = new StringBuilder("select id, uid, model_id, prompt_type, " +
                 "CASE WHEN input IS NOT NULL THEN SUBSTRING(input, 1, 100) ELSE input END as input, " +
                 "CASE WHEN output IS NOT NULL THEN SUBSTRING(output, 1, 100) ELSE output END as output, " +
                 "input_token, output_token, cost_time, applied, create_time " +
@@ -32,8 +32,8 @@ public class LLMLogSql {
         if (filter.getUid() != null) {
             sb.append(" and uid = #{llmLogFilter.uid}");
         }
-        if (filter.getModelType() != null) {
-            sb.append(" and model_type = " + filter.getModelType().getValue());
+        if (filter.getModelId() != null) {
+            sb.append(" and model_id = " + filter.getModelId());
         }
         if (filter.getPromptType() != null) {
             sb.append(" and prompt_type = " + filter.getPromptType().getValue());

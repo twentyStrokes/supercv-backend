@@ -1,6 +1,6 @@
 package com.xzgedu.supercv.admin.controller.llm;
 
-import com.xzgedu.supercv.llm.enums.ModelType;
+import com.xzgedu.supercv.llm.enums.LLMType;
 import com.xzgedu.supercv.llm.enums.PromptType;
 import com.xzgedu.supercv.llm.enums.SortType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +13,9 @@ import java.util.List;
 @RestController
 public class AdminLLMController {
 
-    @GetMapping("/model/type/list")
-    public List<ModelType.ModelTypeBo> listAllModelTypes() {
-        return ModelType.getAllModelTypeBo();
+    @GetMapping("/type/list")
+    public List<LLMType.LLMTypeBo> listAllLLMTypes() {
+        return LLMType.getAllLLMTypeBo();
     }
 
     @GetMapping("/prompt/type/list")

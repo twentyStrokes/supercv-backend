@@ -1,13 +1,14 @@
 package com.xzgedu.supercv.resume.enums;
 
 public enum DefaultProfileItem {
-    NAME("name", "姓名"),
-    TELEPHONE("telephone", "电话"),
+    TELEPHONE("telephone", "手机"),
     EMAIL("email", "邮箱"),
     WECHAT("wechat", "微信"),
     WORK_YEARS("workYears", "工作年限"),
     WORK_PLACE("workPlace", "工作地点"),
+    JOB_INTENTION("jobIntention", "求职意向"),
     EXPECT_SALARY("expectSalary", "期望薪资"),
+    WORK_STATUS("workStatus", "在职状态"),
     BLOG("blog", "博客"),
     GITHUB("github", "GitHub");
 

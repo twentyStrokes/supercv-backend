@@ -10,6 +10,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Profile {
     private String title; // 标题:基本信息
+    private String name;
     private String photoUrl; // 头像
     private Boolean photoEnabled; // 是否显示头像
     private Integer photoLayout; // 头像布局，默认居右，暂时只支持：居左、居右

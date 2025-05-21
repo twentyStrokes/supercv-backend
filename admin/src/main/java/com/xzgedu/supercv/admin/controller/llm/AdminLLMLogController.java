@@ -2,7 +2,6 @@ package com.xzgedu.supercv.admin.controller.llm;
 
 import com.xzgedu.supercv.llm.domain.LLMLog;
 import com.xzgedu.supercv.llm.domain.LLMLogFilter;
-import com.xzgedu.supercv.llm.enums.ModelType;
 import com.xzgedu.supercv.llm.enums.PromptType;
 import com.xzgedu.supercv.llm.enums.SortType;
 import com.xzgedu.supercv.llm.service.LLMLogService;
@@ -31,7 +30,7 @@ public class AdminLLMLogController {
 
     @GetMapping("/list")
     public Map<String, Object> listLLMLogs(@RequestParam(value = "filter_uid", required = false) Long filterUid,
-                                           @RequestParam(value = "model_type", required = false) Integer modelType,
+                                           @RequestParam(value = "model_id", required = false) Long modelId,
                                            @RequestParam(value = "prompt_type", required = false) Integer promptType,
                                            @RequestParam(value = "sort_type", required = false) Integer sortType,
                                            @RequestParam("page_no") int pageNo,
@@ -40,7 +39,7 @@ public class AdminLLMLogController {
         int limitSize = pageSize;
         LLMLogFilter filter = new LLMLogFilter();
         filter.setUid(filterUid);
-        filter.setModelType(ModelType.of(modelType));
+        filter.setModelId(modelId);
         filter.setPromptType(PromptType.of(promptType));
         SortType sortTypeEnum = SortType.of(sortType);
         List<LLMLog> llmLogs = llmLogService.selectLLMLogs(filter, sortTypeEnum, limitOffset, limitSize);

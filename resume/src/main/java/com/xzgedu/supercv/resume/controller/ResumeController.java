@@ -40,25 +40,21 @@ public class ResumeController {
 
     @Operation(summary = "获取简历详情")
     @GetMapping("/detail")
-    public Resume getResumeDetail(@RequestHeader("uid") long uid,
-                                  @RequestParam("resume_id") long resumeId) {
+    public Resume getResumeDetail(@RequestParam("resume_id") long resumeId) {
         return resumeService.getResumeById(resumeId);
     }
 
     @Operation(summary = "删除简历")
     @PostMapping("/delete")
-    public void deleteResume(@RequestHeader("uid") long uid,
-                             @RequestParam("resume_id") long resumeId) {
+    public void deleteResume(@RequestParam("resume_id") long resumeId) {
         resumeService.deleteResume(resumeId);
     }
 
     @Operation(summary = "更新简历")
     @PostMapping("/update")
-    public boolean updateResume(@RequestHeader("uid") long uid,
-                                @RequestParam("resume_id") long resumeId,
+    public boolean updateResume(@RequestParam("resume_id") long resumeId,
                                 @RequestParam(value = "name", required = false) String name,
                                 @RequestParam(value = "template_id", required = false) Long templateId,
-                                @RequestParam(value = "raw_file", required = false) String rawFile,
                                 @RequestParam(value = "raw_data_json", required = false) String rawDataJson,
                                 @RequestParam(value = "extra_style_json", required = false) String extraStyleJson,
                                 @RequestParam(value = "is_public", required = false) Boolean isPublic) {

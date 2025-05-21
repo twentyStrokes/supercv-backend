@@ -134,6 +134,11 @@ public class ResumeService {
             newResumeName = "未命名简历";
         }
         Resume resume = ResumeFactory.create(uid, templateId, newResumeName);
+        Template template = templateRepo.getTemplateById(templateId);
+        if (template.getDemoResumeId() != null) {
+            Resume demoResume = getResumeById(template.getDemoResumeId());
+            resume.setExtraStyle(demoResume.getExtraStyle());
+        }
         if (!resumeRepo.insertResume(resume)) {
             throw new GenericBizException("Failed to insert resume: " + resume);
         }
@@ -181,7 +186,14 @@ public class ResumeService {
         resume.setTemplateId(templateId);
         resume.setFileId(resumeFile.getId());
         resume.setFileUrl(resumeFile.getFileUrl());
-        resume.setExtraStyle(ResumeFactory.createDefaultExtraStyle());
+        Template template = templateRepo.getTemplateById(templateId);
+        if (template.getDemoResumeId() != null) {
+            Resume demoResume = getResumeById(template.getDemoResumeId());
+            resume.setExtraStyle(demoResume.getExtraStyle());
+        } else {
+            resume.setExtraStyle(ResumeFactory.createDefaultExtraStyle());
+        }
+
         resume.setRawDataJson(resumeFile.getParsedJson());
         resume.setPublic(false);
         if (!resumeRepo.insertResume(resume)) {

@@ -12,7 +12,7 @@ public interface LLMLogMapper {
     @Results(id="LLMLog", value = {
             @Result(property = "id", column = "id"),
             @Result(property = "uid", column = "uid"),
-            @Result(property = "modelType", column = "model_type"),
+            @Result(property = "modelId", column = "model_id"),
             @Result(property = "promptType", column = "prompt_type"),
             @Result(property = "input", column = "input"),
             @Result(property = "output", column = "output"),
@@ -36,7 +36,7 @@ public interface LLMLogMapper {
     int countLLMLogs(@Param("llmLogFilter") LLMLogFilter llmLogFilter);
 
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    @Insert("INSERT INTO llm_log (uid, model_type, prompt_type, input, output, input_token, output_token, cost_time, applied) " +
-            "VALUES (#{uid}, #{modelType}, #{promptType}, #{input}, #{output}, #{inputToken}, #{outputToken}, #{costTime}, #{applied})")
+    @Insert("INSERT INTO llm_log (uid, model_id, prompt_type, input, output, input_token, output_token, cost_time, applied) " +
+            "VALUES (#{uid}, #{modelId}, #{promptType}, #{input}, #{output}, #{inputToken}, #{outputToken}, #{costTime}, #{applied})")
     int insertLLMLog(LLMLog llmLog);
 }

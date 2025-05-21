@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO: 优化这个类的代码
 @Tag(name = "会员")
 @RequestMapping("/v1/vip")
 @RestController
@@ -34,6 +35,12 @@ public class VipController {
     @GetMapping("/permit/resume-import")
     public Map<String, Object> permitResumeImport(@RequestHeader("uid") long uid) {
         Vip vip = vipService.getVipInfo(uid);
+        if (vip == null) {
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("permit", false);
+            resp.put("description", "非会员用户");
+            return resp;
+        }
         return permit(vip, vip.getResumeImportLeftNum());
     }
 
@@ -41,6 +48,12 @@ public class VipController {
     @GetMapping("/permit/resume-export")
     public Map<String, Object> permitResumeExport(@RequestHeader("uid") long uid) {
         Vip vip = vipService.getVipInfo(uid);
+        if (vip == null) {
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("permit", false);
+            resp.put("description", "非会员用户");
+            return resp;
+        }
         return permit(vip, vip.getResumeExportLeftNum());
     }
 
@@ -48,20 +61,38 @@ public class VipController {
     @GetMapping("/permit/resume-create")
     public Map<String, Object> permitResumeCreate(@RequestHeader("uid") long uid) {
         Vip vip = vipService.getVipInfo(uid);
+        if (vip == null) {
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("permit", false);
+            resp.put("description", "非会员用户");
+            return resp;
+        }
         return permit(vip, vip.getResumeCreateLeftNum());
     }
 
     @Operation(summary = "检查是否为合法会员，并且剩余AI分析次数大于0")
-    @GetMapping("/permit/ai-analysis")
+    @GetMapping("/permit/resume-analyze")
     public Map<String, Object> permitAiAnalysis(@RequestHeader("uid") long uid) {
         Vip vip = vipService.getVipInfo(uid);
+        if (vip == null) {
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("permit", false);
+            resp.put("description", "非会员用户");
+            return resp;
+        }
         return permit(vip, vip.getResumeAnalyzeLeftNum());
     }
 
     @Operation(summary = "检查是否为合法会员，并且剩余AI优化次数大于0")
-    @GetMapping("/permit/ai-optimize")
+    @GetMapping("/permit/resume-optimize")
     public Map<String, Object> permitAiOptimize(@RequestHeader("uid") long uid) {
         Vip vip = vipService.getVipInfo(uid);
+        if (vip == null) {
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("permit", false);
+            resp.put("description", "非会员用户");
+            return resp;
+        }
         return permit(vip, vip.getResumeOptimizeLeftNum());
     }
 

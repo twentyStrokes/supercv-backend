@@ -126,11 +126,23 @@ create table if not exists `resume_file` (
     unique (`file_url`)
 );
 
+create table if not exists `llm_model` (
+    `id` bigint NOT NULL AUTO_INCREMENT,
+    `llm_type` tinyint NOT NULL COMMENT '大模型分类',
+    `model_name` varchar(64) NOT NULL COMMENT '具体模型名称',
+    `api_key` varchar(256) COMMENT 'api key',
+    `endpoint` varchar(256) COMMENT 'endpoint',
+    `enabled` boolean NOT NULL DEFAULT false COMMENT '是否启用',
+    `create_time` datetime NOT NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time` datetime NOT NULL DEFAULT current_timestamp on update current_timestamp COMMENT '更新时间',
+    primary key (`id`)
+);
+
 -- 记录llm调用详情
 create table if not exists `llm_log` (
     `id` bigint NOT NULL AUTO_INCREMENT,
     `uid` bigint NOT NULL COMMENT '用户ID',
-    `model_type` tinyint NOT NULL COMMENT '模型类型',
+    `model_id` bigint NOT NULL COMMENT 'llm_model模型ID', -- TODO
     `prompt_type` tinyint NOT NULL COMMENT '请求类型',
     `input` longtext NOT NULL COMMENT '输入',
     `output` longtext COMMENT '输出',
