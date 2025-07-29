@@ -1,3 +1,6 @@
+CREATE DATABASE supercv_db_dev;
+USE supercv_db_dev;
+
 -- 用户
 create table if not exists `cv_user` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户ID',
@@ -38,7 +41,7 @@ create table if not exists `sms_code` (
 
 -- 管理员账号
 create table if not exists `admin` (
-    `uid` bigint NOT NULL,
+    `uid` bigint NOT NULL COMMENT '用户ID',
     primary key (`uid`)
 );
 
@@ -88,7 +91,7 @@ create table if not exists `resume_template` (
     `demo_resume_id` bigint COMMENT '简历ID',
     `is_public` boolean DEFAULT FALSE COMMENT '是否公开', -- 在模版开发的过程中，简历模版不公开，用户看不到
     `is_deleted` boolean DEFAULT FALSE COMMENT '是否已删除',
-    `create_time` datetime NOT NULL DEFAULT current_timestamp,
+    `create_time` datetime NOT NULL DEFAULT current_timestamp COMMENT '创建时间',,
     `update_time` datetime NOT NULL DEFAULT current_timestamp on update current_timestamp,
     primary key (`id`)
 );
@@ -126,6 +129,7 @@ create table if not exists `resume_file` (
     unique (`file_url`)
 );
 
+-- LLM模型
 create table if not exists `llm_model` (
     `id` bigint NOT NULL AUTO_INCREMENT,
     `llm_type` tinyint NOT NULL COMMENT '大模型分类',
@@ -142,7 +146,7 @@ create table if not exists `llm_model` (
 create table if not exists `llm_log` (
     `id` bigint NOT NULL AUTO_INCREMENT,
     `uid` bigint NOT NULL COMMENT '用户ID',
-    `model_id` bigint NOT NULL COMMENT 'llm_model模型ID', -- TODO
+    `model_id` bigint NOT NULL COMMENT 'llm_model模型ID',
     `prompt_type` tinyint NOT NULL COMMENT '请求类型',
     `input` longtext NOT NULL COMMENT '输入',
     `output` longtext COMMENT '输出',
@@ -150,8 +154,8 @@ create table if not exists `llm_log` (
     `output_token` int COMMENT '输出token',
     `cost_time` int COMMENT '耗时，单位毫秒ms',
     `applied` boolean COMMENT '是否应用',
-    `create_time` datetime NOT NULL DEFAULT current_timestamp,
-    `update_time` datetime NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    `create_time` datetime NOT NULL DEFAULT current_timestamp COMMENT '创建时间',,
+    `update_time` datetime NOT NULL DEFAULT current_timestamp on update current_timestamp COMMENT '更新时间',
     primary key (`id`)
 );
 
@@ -193,6 +197,8 @@ CREATE TABLE IF NOT EXISTS `payment_channel` (
     `callback_url` varchar(256) COMMENT '支付渠道回调地址',
     `return_url` varchar(256) COMMENT '支付渠道支付成功后跳转地址',
     `enabled` boolean default false,
+    `create_time` datetime not null default current_timestamp COMMENT '创建时间',
+    `update_time` datetime not null default current_timestamp on update current_timestamp COMMENT '更新时间',
     primary key (`id`)
 );
 
@@ -200,15 +206,15 @@ CREATE TABLE IF NOT EXISTS `payment_channel` (
 create table if not exists `article` (
     `id` bigint not null auto_increment comment '文章ID',
     `uid` bigint not null comment '用户ID',
-    `cate_type` tinyint not null comment '文章分类类型：1_案例参考、2_专家服务',
+    `cate_type` tinyint not null comment '文章分类类型：1_案例参考、2_求职攻略',
     `title` varchar(256) not null comment '文章标题',
     `sub_title` varchar(256) comment '文章副标题',
     `snippet` varchar(1024) comment '文章摘要',
     `cover_img` varchar(1024) comment '文章封面图',
     `content_id` bigint comment '文章正文ID',
     `is_free` boolean default false comment '是否免费',
-    `create_time` datetime not null default current_timestamp,
-    `update_time` datetime not null default current_timestamp on update current_timestamp,
+    `create_time` datetime not null default current_timestamp COMMENT '创建时间',
+    `update_time` datetime not null default current_timestamp on update current_timestamp COMMENT '更新时间',
     primary key (`id`)
 );
 
@@ -216,19 +222,21 @@ create table if not exists `article` (
 create table if not exists `article_content` (
     `id` bigint not null auto_increment comment '文章正文ID',
     `content` mediumtext not null comment '正文内容',
-    `create_time` datetime not null default current_timestamp,
-    `update_time` datetime not null default current_timestamp on update current_timestamp,
+    `create_time` datetime not null default current_timestamp COMMENT '创建时间',
+    `update_time` datetime not null default current_timestamp on update current_timestamp COMMENT '更新时间',
     primary key (`id`)
 );
 
 -- oss token
 CREATE TABLE IF NOT EXISTS `oss_sts`(
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-    `uid` bigint NOT NULL,
-    `access_key_id` varchar(128),
-    `access_key_secret` varchar(128),
-    `security_token` varchar(5120),
-    `expiration` bigint,
+    `uid` bigint NOT NULL COMMENT '用户ID',
+    `access_key_id` varchar(128) COMMENT 'AccessKeyId',
+    `access_key_secret` varchar(128) COMMENT 'AccessKeySecret',
+    `security_token` varchar(5120) COMMENT 'SecurityToken',
+    `expiration` bigint COMMENT '过期时间戳',
+    `create_time` datetime not null default current_timestamp COMMENT '创建时间',
+    `update_time` datetime not null default current_timestamp on update current_timestamp COMMENT '更新时间',
     primary key (`id`),
     unique (`uid`)
 );

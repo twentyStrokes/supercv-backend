@@ -15,9 +15,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class ResumeImportInterceptor implements HandlerInterceptor {
 
     @Autowired
-    private AdminService adminService;
-
-    @Autowired
     private VipService vipService;
 
     @Override

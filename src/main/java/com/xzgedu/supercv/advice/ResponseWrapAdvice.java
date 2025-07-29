@@ -63,6 +63,7 @@ public class ResponseWrapAdvice implements ResponseBodyAdvice<Object> {
     }
 
     @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(value = {BizException.class})
     public ResponseData handleBusinessException(BizException e) {
         log.warn(e.ERROR_CODE + ": " + e.toString()); // 注意：此处不要把exception的stack trace打印出来

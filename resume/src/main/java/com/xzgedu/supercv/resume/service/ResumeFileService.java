@@ -5,7 +5,6 @@ import com.xzgedu.supercv.llm.LLMFactory;
 import com.xzgedu.supercv.llm.PdfParser;
 import com.xzgedu.supercv.llm.domain.LLMPrompt;
 import com.xzgedu.supercv.llm.domain.LLMPromptBuilder;
-import com.xzgedu.supercv.llm.enums.LLMType;
 import com.xzgedu.supercv.resume.domain.RawData;
 import com.xzgedu.supercv.resume.domain.ResumeFile;
 import com.xzgedu.supercv.resume.enums.ResumeFileParsedStatus;

@@ -80,7 +80,7 @@ public enum ErrorCode {
     ERROR_UNKNOWN(99999, "未知错误"),
 
     /**
-     * 为了兼容HTTP Code，做到一目了然，这几个返回值比较特殊
+     * 为了兼容HTTP Code，做到一目了然，这几个值比较特殊
      */
     ERROR_400(400, "接口参数不正确"),
     ERROR_404(404, "接口不存在，请仔细检查url"),
