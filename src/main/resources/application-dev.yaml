@@ -53,12 +53,14 @@ springdoc:
     disabled: true
 
 wxOpen:
-  appID: [set_by_yourself]
+  appID: set_by_yourself
   appSecret: set_by_yourself
 
 aliyun:
   accessKeyId: set_by_yourself
   accessKeySecret: set_by_yourself
+  ossAccessKeyId: set_by_yourself
+  ossAccessKeySecret: set_by_yourself
 
 sms:
   sign_name: set_by_yourself
